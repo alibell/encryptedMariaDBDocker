@@ -1,0 +1,6 @@
+services:
+  mariadb:
+    build:
+      context: .
+    stdin_open: true
+    tty: true
