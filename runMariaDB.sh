@@ -7,16 +7,19 @@ else
 fi
 
 # Assert password is ok
-decrypted=$(openssl aes-256-cbc -md sha1 -d -k $PASSWORD -in /etc/mariadb/encryption/keyfile.enc | cut -c1-1)
+decrypted=$(openssl aes-256-cbc -md sha1 -d -k $PASSWORD -in /var/mariadb/encryption/keyfile.enc | cut -c1-1)
 if [[ $decrypted != "1" ]]; then
     echo "Bad decryption password"
     exit 1    
 fi
 
 # Launch mariadb
-mariadbd \
-    --datadir=/var/lib/mariadb \
-    --user=root \
+/usr/local/bin/docker-entrypoint.sh \
     --plugin-load-add=file_key_management \
     --file-key-management-filekey=$PASSWORD \
-    --file-key-management-filename=/etc/mariadb/encryption/keyfile.enc
+    --file-key-management-filename=/var/mariadb/encryption/keyfile.enc \
+    --innodb-encrypt-tables=1 \
+    --innodb-encrypt-temporary-tables=1 \
+    --innodb-encrypt-log=1 \
+    --innodb-encryption-threads=4 \
+    --innodb-encryption-rotate-key-age=1

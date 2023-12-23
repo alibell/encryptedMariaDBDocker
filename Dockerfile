@@ -4,18 +4,27 @@ LABEL maintainer="Ali Bellamine contact@alibellamine.me"
 # Get password on build time
 ARG ENCRYPTION_PASSWORD
 
-RUN mkdir /etc/mariadb && mkdir /etc/mariadb/encryption
+# Getting working dir
+#ENV WORKDIR="/etc/mariadb"
+#ENV DATADIR=$WORKDIR/data
+
+RUN mkdir /var/mariadb && mkdir /var/mariadb/encryption
+
 COPY ./runMariaDB.sh /runMariaDB.sh
+RUN rm -rf /var/lib/mysql && mkdir /var/lib/mysql
 RUN chmod +x /runMariaDB.sh
+RUN chown -R mysql:mysql /var/lib/mysql && chmod -R 700 /var/lib/mysql
+RUN chown -R mysql:mysql /var/mariadb
+
+# Change user to mysql
+USER mysql
 
 # Generate keys
-RUN echo "1;"$(openssl rand -hex 32) > /etc/mariadb/encryption/keyfile
+RUN echo "1;"$(openssl rand -hex 32) > /var/mariadb/encryption/keyfile
 RUN openssl enc -aes-256-cbc -md sha1 \
    -pass pass:$ENCRYPTION_PASSWORD \
-   -in /etc/mariadb/encryption/keyfile \
-   -out /etc/mariadb/encryption/keyfile.enc
-RUN rm /etc/mariadb/encryption/keyfile
-
-RUN mariadb-install-db --user=root --basedir=/usr --datadir=/var/lib/mariadb
+   -in /var/mariadb/encryption/keyfile \
+   -out /var/mariadb/encryption/keyfile.enc
+RUN rm /var/mariadb/encryption/keyfile
 
 CMD ["/runMariaDB.sh"]
