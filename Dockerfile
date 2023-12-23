@@ -4,10 +4,6 @@ LABEL maintainer="Ali Bellamine contact@alibellamine.me"
 # Get password on build time
 ARG ENCRYPTION_PASSWORD
 
-# Getting working dir
-#ENV WORKDIR="/etc/mariadb"
-#ENV DATADIR=$WORKDIR/data
-
 RUN mkdir /var/mariadb && mkdir /var/mariadb/encryption
 
 COPY ./runMariaDB.sh /runMariaDB.sh
