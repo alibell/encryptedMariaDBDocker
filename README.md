@@ -4,7 +4,7 @@ Docker configuration for a encryption-in-rest mariadb configuration
 ## Build image
 
 ```
-    docker compose build --build-arg ENCRYPTION_PASSWORD=[YOUR ENCRYPTION PASSWORD]
+    docker compose build
 ```
 
 ## Run image
