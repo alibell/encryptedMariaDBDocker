@@ -1,4 +1,5 @@
 FROM mariadb:11.2.2
+LABEL maintainer="Ali Bellamine contact@alibellamine.me"
 
 # Get password on build time
 ARG ENCRYPTION_PASSWORD
